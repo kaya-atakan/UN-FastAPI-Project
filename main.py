@@ -36,6 +36,22 @@ async def get_un_data():
     # Replace 'Country' with the actual column name for countries in your dataset
     df = df[df['International migrants and refugees'].isin(eu_countries)]
 
+    # Drop unwanted columns
+    df = df.drop(columns=["T04","Unnamed: 5", "Unnamed: 6"])
+
+    # Generate a unique list of countries and create a mapping to new IDs
+    unique_countries = df['International migrants and refugees'].unique()
+    country_id_map = {country: idx + 1 for idx, country in enumerate(unique_countries)}
+
+    # Map the countries in the DataFrame to their new IDs
+    df['country_id'] = df['International migrants and refugees'].map(country_id_map)
+
+    # Rename columns
+    df = df.rename(columns={"Unnamed: 2": "year", "Unnamed: 3": "statistic_type", "Unnamed: 4": "value"})
+
+    # Reorder columns
+    df = df[['country_id', 'year', 'statistic_type', 'value']]
+
     # Convert the filtered DataFrame to a list of dictionaries
     data = df.to_dict(orient='records')
     return data
