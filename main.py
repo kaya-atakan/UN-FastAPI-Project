@@ -37,7 +37,7 @@ async def get_un_data():
     df = df[df['International migrants and refugees'].isin(eu_countries)]
 
     # Drop unwanted columns
-    df = df.drop(columns=["T04","Unnamed: 5", "Unnamed: 6"])
+    df = df.drop(columns=["Unnamed: 5", "Unnamed: 6"])
 
     # Generate a unique list of countries and create a mapping to new IDs
     unique_countries = df['International migrants and refugees'].unique()
@@ -47,10 +47,20 @@ async def get_un_data():
     df['country_id'] = df['International migrants and refugees'].map(country_id_map)
 
     # Rename columns
-    df = df.rename(columns={"Unnamed: 2": "year", "Unnamed: 3": "statistic_type", "Unnamed: 4": "value"})
+    df = df.rename(columns={"International migrants and refugees": "country_name", "Unnamed: 2": "year", "Unnamed: 3": "statistic_type", "Unnamed: 4": "value"})
 
     # Reorder columns
-    df = df[['country_id', 'year', 'statistic_type', 'value']]
+    df = df[['country_name','country_id', 'year', 'statistic_type', 'value']]
+
+    df = df.query("statistic_type == 'International migrant stock: Both sexes (% total population)'")
+
+    # Check if each country has data for all four years
+    # years_required = {2005, 2010, 2015, 2020}
+    # check_years = df.groupby(['country_id', 'country_name'])['year'].apply(lambda x: set(x.astype(int)) == years_required)
+
+    # Convert the check result to a dictionary and return it
+    # check_years_dict = check_years.reset_index().rename(columns={'year': 'has_all_years'}).to_dict(orient='records')
+    # return check_years_dict
 
     # Convert the filtered DataFrame to a list of dictionaries
     data = df.to_dict(orient='records')
