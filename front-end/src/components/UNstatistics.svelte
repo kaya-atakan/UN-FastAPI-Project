@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import type { UNData } from './types';
+    import type { UNData } from '../types';
 
     let data: UNData[] = [];
 
