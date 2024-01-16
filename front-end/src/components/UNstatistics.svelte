@@ -5,6 +5,7 @@
     let data: UNData[] = [];
 
     async function fetchData(): Promise<void> {
+        console.log('Fetching data...');
         const url = 'http://localhost:8000/un_data';
         try {
             const response = await fetch(url);
@@ -12,6 +13,7 @@
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             data = await response.json();
+            console.log('Data received:', data);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -22,11 +24,14 @@
     });
 </script>
 
-{#each data as item (item.country_id)}
+<!-- The rest of your component's HTML goes here -->
+{#if data.length > 0}
     <div>
-        <p>Country: {item.country_name}</p>
-        <p>Year: {item.year}</p>
-        <p>Statistic: {item.statistic_type}</p>
-        <p>Value: {item.value}</p>
+        <p>Country: {data[0].country_name}</p>
+        <p>Year: {data[0].year}</p>
+        <p>Statistic: {data[0].statistic_type}</p>
+        <p>Value: {data[0].value}</p>
     </div>
-{/each}
+{:else}
+    <p>Loading data or no data available...</p>
+{/if}
